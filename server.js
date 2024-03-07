@@ -3,6 +3,9 @@ const app = express();
 const mongoose = require("mongoose");
 const api_version = "api/v1";
 const cors = require('cors');
+const authRoutes = require('./routes/authRoutes');
+const activityRoutes = require('./routes/activityRouter');
+const accountRoutes = require('./routes/accountRoutes');
 
 (() => {
     body_parser();
@@ -12,14 +15,15 @@ const cors = require('cors');
 })();
 
 function db_config() {
-    mongoose.connect("mongodb+srv://jitu:1999@cluster0.0lsnx.mongodb.net/employee_daily_activity?retryWrites=true&w=majority", (err) => {
-        if (!err) {
-            console.log("database connected succcessfully");
-        }
-        else {
-            console.log("err", err);
-        }
-    });
+    try{
+     const connect =  mongoose.connect("mongodb+srv://jitu:1999@cluster0.0lsnx.mongodb.net/employee_daily_activity?retryWrites=true&w=majority");
+     if(connect){
+        console.log("database connected")
+     } 
+    }
+    catch(err){
+        console.log(err)
+    }
 
 }
 
@@ -31,7 +35,9 @@ function body_parser() {
 }
 
 function routes_config() {
-  
+   app.use('/',authRoutes)
+   app.use('/',activityRoutes)
+   app.use('/',accountRoutes)
 }
 
 function global_Error_Handler() {
