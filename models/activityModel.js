@@ -6,7 +6,7 @@ const model = mongoose.Schema({
         type:Date,
         default:Date.now()
     },
-    activtyType:{
+    activityType:{
         type:String,
         required:true
     },
@@ -44,6 +44,15 @@ const model = mongoose.Schema({
     userId:{
         type: Schema.Types.ObjectId,
         ref: 'Users'
+    },
+    files:{
+        type:Array
+    },
+    status:{
+        type:String
+    },
+    nextAction:{
+        type:String
     }
 })
 

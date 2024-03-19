@@ -6,6 +6,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const activityRoutes = require('./routes/activityRouter');
 const accountRoutes = require('./routes/accountRoutes');
+const uploadRouter = require('./utility/fileUpload');
 
 (() => {
     body_parser();
@@ -38,6 +39,7 @@ function routes_config() {
    app.use('/',authRoutes)
    app.use('/',activityRoutes)
    app.use('/',accountRoutes)
+   app.use('/',uploadRouter)
 }
 
 function global_Error_Handler() {

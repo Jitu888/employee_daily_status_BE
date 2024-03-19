@@ -1,6 +1,7 @@
 const activityModel = require('../models/activityModel');
 
 exports.activityController = async (req, res) => {
+    console.log(req.body)
     try {
         const data = new activityModel(req.body)
         const result = await data.save()
@@ -9,7 +10,7 @@ exports.activityController = async (req, res) => {
         }
     }
     catch (err) {
-        res.status(500).send({ success: false, msg: 'something went wrong', data: [] })
+        res.status(500).send({ success: false, msg: 'something went wrong', data: [],err:err })
     }
 }
 
