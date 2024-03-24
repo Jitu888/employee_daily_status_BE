@@ -17,14 +17,32 @@ exports.activityController = async (req, res) => {
 exports.getActivityController = async (req, res) => {
     try {
 
-        const { id, page = 1, limit = 10 } = req.query
+        const { searchKey, id, page = 1, limit = 10 } = req.query
         const skip = (page - 1) * limit;
-        const result = await activityModel.find({ userId: id }).populate('account').skip(skip).limit(limit)
-        if (result) {
-            res.status(200).send({ success: true, msg: '', data: result })
+        if (searchKey && searchKey.length > 0) {
+            const skip = (page - 1) * limit;
+            const accountIds = await accountModel.find({ accountName: { $regex: searchKey, $options: 'i' } }, '_id');
+            const result = await activityModel
+                .find({ userId: id, account: { $in: accountIds } })
+                .populate('account')
+                .skip(skip)
+                .limit(limit);
+            if (result) {
+                res.status(200).send({ success: true, msg: '', data: result })
+            }
+            else {
+                res.status(500).send({ success: false, msg: 'internal server error', data: [] })
+            }
         }
         else {
-            res.status(500).send({ success: false, msg: 'internal server error', data: [] })
+
+            const result = await activityModel.find({ userId: id }).populate('account').skip(skip).limit(limit)
+            if (result) {
+                res.status(200).send({ success: true, msg: '', data: result })
+            }
+            else {
+                res.status(500).send({ success: false, msg: 'internal server error', data: [] })
+            }
         }
     }
     catch (err) {
