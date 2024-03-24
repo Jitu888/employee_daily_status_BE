@@ -22,7 +22,7 @@ exports.addAccount = async (req, res) => {
 
 exports.getAllAccount = async (req, res) => {
     try {
-
+        
         const result = await accountModel.find()
         if (result) {
             res.status(200).send({ success: true, msg: '', data: result })
@@ -36,3 +36,5 @@ exports.getAllAccount = async (req, res) => {
 
     }
 }
+
+
