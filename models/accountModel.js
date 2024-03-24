@@ -13,7 +13,20 @@ const model = mongoose.Schema({
     accountAddress:{
         type:String,
         required:true
+    },
+    accountEmail:{
+        type:String,
+    },
+    accountWebsiteUrl:{
+        type:String
+    },
+    contactPersonName:{
+       type:String
+    },
+    contactPersonNumber:{
+        type:String
     }
+
 })
 
 const accountModel = mongoose.model('Account',model)

@@ -1,26 +1,20 @@
 const userModel = require('../models/userModel')
+const jwt = require('jsonwebtoken')
+const JWT_SECERET_KEY = "godfather@1234"
 
 exports.login = async (req, res) => {
     try {
 
 
         const { email, password } = req.body
-        const pattern = /kloudrac/i;
-        const containsKloudrac = pattern.test(email);
-        if (!containsKloudrac) {
-            res.status(400).send({ success: false, msg: "login with kloudrac email id", data: "" })
+        const emailExist = await userModel.findOne({ email: email })
+        if (!emailExist) {
+            res.status(401).send({ success: false, msg: "invalid credentials", data: "" })
         }
         else {
-
-
-            const emailExist = await userModel.findOne({ email: email })
-            if (!emailExist) {
-                res.status(401).send({ success: false, msg: "invalid credentials", data: "" })
-            }
-            else {
-                if (emailExist.password === password) {
-                    res.status(200).send({ success: true, msg: "login successfull", data: emailExist })
-                }
+            if (emailExist.password === password) {
+                const token = jwt.sign({email:emailExist.email},JWT_SECERET_KEY)
+                res.status(200).send({ success: true, msg: "login successfull",token:token, data: emailExist })
             }
         }
 
@@ -50,7 +44,7 @@ exports.register = async (req, res) => {
                     res.status(500).send({ success: false, msg: "internal server error", data: "" })
                 }
                 else {
-                    res.status(200).send({ success: false, msg: "user registered successfully", data:result })
+                    res.status(200).send({ success: false, msg: "user registered successfully", data: result })
 
                 }
             }
@@ -58,6 +52,6 @@ exports.register = async (req, res) => {
 
     }
     catch (err) {
-         res.status(500).send({success:false,msg:"something went wrong",err:err,data:[]})
+        res.status(500).send({ success: false, msg: "something went wrong", err: err, data: [] })
     }
 }
