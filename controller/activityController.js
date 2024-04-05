@@ -36,7 +36,7 @@ exports.getActivityController = async (req, res) => {
         }
         else {
 
-            const result = await activityModel.find({ userId: id }).populate('account').skip(skip).limit(limit)
+            const result = await activityModel.find({ userId: id }).skip(skip).limit(limit).populate({ path: 'account', populate: { path: 'contact' }}).exec()
             if (result) {
                 res.status(200).send({ success: true, msg: '', data: result })
             }
@@ -90,5 +90,35 @@ exports.getActicityBySearch = async (req, res) => {
         console.log(err)
         res.status(500).send({ success: false, msg: 'internal server error', data: [] })
 
+    }
+}
+
+exports.checkInCheckOut = async (req, res) => {
+    try {
+        const { location, isCheckedIn, time, id } = req.body
+        console.log(isCheckedIn)
+        if (isCheckedIn) {
+            const obj = { checkInLocation: location, checkInTime: time, isCheckedIn: isCheckedIn }
+            const result = await activityModel.findOneAndUpdate({ _id: id }, obj)
+            if (result) {
+                res.status(200).send({ success: true, msg: 'check in successfully', data: result })
+            }
+            else {
+                res.status(500).send({ success: false, msg: 'something went wrong', data: [] })
+            }
+        }
+        else {
+            const obj = { checkOutLocation: location, checkOutTime: time, isCheckedIn: isCheckedIn }
+            const result = await activityModel.findOneAndUpdate({ _id: id }, obj, { new: true })
+            if (result) {
+                res.status(200).send({ success: true, msg: 'check out successfully', data: result })
+            }
+            else {
+                res.status(500).send({ success: false, msg: 'something went wrong', data: [] })
+            }
+        }
+    }
+    catch (err) {
+        res.status(500).send({ success: false, msg: err.message, data: [] })
     }
 }

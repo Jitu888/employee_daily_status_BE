@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-// const {Schema} = require('mongoose');
+const {Schema} = require('mongoose');
 
 const model = mongoose.Schema({
     accountName:{
@@ -8,11 +8,9 @@ const model = mongoose.Schema({
     },
     accountContact:{
         type:String,
-        required:true
     },
     accountAddress:{
         type:String,
-        required:true
     },
     accountEmail:{
         type:String,
@@ -20,12 +18,9 @@ const model = mongoose.Schema({
     accountWebsiteUrl:{
         type:String
     },
-    contactPersonName:{
-       type:String
-    },
-    contactPersonNumber:{
-        type:String
-    }
+    contact:[{ type: Schema.Types.ObjectId, ref: 'AccountContact' }]
+    
+    
 
 })
 

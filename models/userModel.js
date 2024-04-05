@@ -4,7 +4,8 @@ const {Schema} = require('mongoose')
 const model = mongoose.Schema({
    email:{
     type:String,
-    required:true
+    required:true,
+    index: true
    },
    password:{
     type:String,

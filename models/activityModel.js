@@ -26,10 +26,10 @@ const model = mongoose.Schema({
         type:String
     },
     checkInTime:{
-       type:Date
+       type:String
     },
     checkOutTime:{
-       type:Date
+       type:String
     },
     isCheckedIn:{
         type:Boolean,
@@ -43,7 +43,8 @@ const model = mongoose.Schema({
     },
     userId:{
         type: Schema.Types.ObjectId,
-        ref: 'Users'
+        ref: 'Users',
+        index: true
     },
     files:{
         type:Array
@@ -53,7 +54,14 @@ const model = mongoose.Schema({
     },
     nextAction:{
         type:String
-    }
+    },
+    contactPersonName:{
+       type:String
+    },
+    addedFields:{
+        type:Array
+    },
+    
 })
 
 const activityModel = mongoose.model('Activities',model);
