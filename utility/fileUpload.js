@@ -39,16 +39,16 @@ const uploadFile = async (fileObj) => {
    return data
 }
 
-uploadRouter.post('/upload', upload.any(), async (req, res) => {
+uploadRouter.post('/upload', upload.single('file'), async (req, res) => {
     try {
-        const { body, files } = req
-        let fileResult = []
-        for (let f = 0; f < files.length; f++) {
-          const result = await uploadFile(files[f])
-           fileResult.push(result)
-        }
-        console.log(body,fileResult)
-        res.status(200).send({success:true,msg:'uploaded successfully',data:fileResult})
+        const { body, file } = req
+        console.log(body,"seperrsttiuy",file)
+        // let fileResult = []
+        // for (let f = 0; f < files.length; f++) {
+          const result = await uploadFile(file)
+        //    fileResult.push(result)
+        // }
+        res.status(200).send({success:true,msg:'uploaded successfully',data:result})
     }
     catch (err) {
         res.send(err)

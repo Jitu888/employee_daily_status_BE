@@ -15,20 +15,41 @@ exports.activityController = async (req, res) => {
 }
 
 exports.getActivityController = async (req, res) => {
+        console.log("called")
     try {
 
-        const { searchKey, id, page = 1, limit = 10 } = req.query
+        const { searchKey, id, page, limit, startDate, endDate, activityType } = req.query
         const skip = (page - 1) * limit;
+
+        let filter = {userId: id} 
+
+        if(startDate && endDate){
+            filter.activityDate = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            };
+        }
+
+        if(activityType){
+          filter.activityType = activityType
+        }
+
+       
+         
+        const totalPages = await activityModel.find(filter)
+
         if (searchKey && searchKey.length > 0) {
             const skip = (page - 1) * limit;
-            const accountIds = await accountModel.find({ accountName: { $regex: searchKey, $options: 'i' } }, '_id');
+
+            const accountIds = await accountModel.find({ accountName: { $regex: searchKey, $options: 'i' }, }, '_id');
+            const totalPagesCount = await activityModel.find({ userId: id, account: { $in: accountIds },...filter })
             const result = await activityModel
-                .find({ userId: id, account: { $in: accountIds } })
+                .find({ userId: id, account: { $in: accountIds },...filter })
                 .populate('account')
                 .skip(skip)
                 .limit(limit);
             if (result) {
-                res.status(200).send({ success: true, msg: '', data: result })
+                res.status(200).send({ success: true, msg: '', data: result, totalPages: totalPagesCount.length })
             }
             else {
                 res.status(500).send({ success: false, msg: 'internal server error', data: [] })
@@ -36,9 +57,10 @@ exports.getActivityController = async (req, res) => {
         }
         else {
 
-            const result = await activityModel.find({ userId: id }).skip(skip).limit(limit).populate({ path: 'account', populate: { path: 'contact' }}).exec()
+            const result = await activityModel.find(filter).skip(skip).limit(limit).populate({ path: 'account', populate: { path: 'contact' } }).exec()
+            console.log(result)
             if (result) {
-                res.status(200).send({ success: true, msg: '', data: result })
+                res.status(200).send({ success: true, msg: '', data: result, totalPages: totalPages.length })
             }
             else {
                 res.status(500).send({ success: false, msg: 'internal server error', data: [] })
@@ -46,7 +68,7 @@ exports.getActivityController = async (req, res) => {
         }
     }
     catch (err) {
-        res.status(500).send({ success: false, msg: 'internal server error', data: [] })
+        res.status(500).send({ success: false, msg: err.message, data: [] })
     }
 }
 
