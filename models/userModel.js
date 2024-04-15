@@ -21,6 +21,17 @@ const model = mongoose.Schema({
    isAdmin:{
     type:Boolean,
     default:false
+   },
+   is_Verified:{
+    type:Boolean,
+    default:0
+   },
+   otp:{
+    type:String
+   },
+   otpExpiryTime:{
+    type:Date,
+    default:Date.now()
    }
 
 })
