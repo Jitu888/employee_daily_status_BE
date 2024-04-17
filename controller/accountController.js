@@ -46,7 +46,6 @@ exports.getAccountById = async (req, res) => {
     try {
 
         const result = await accountModel.findOne({ _id: req.query.id }).populate('contact')
-        console.log(result.contact)
         if (result) {
 
             res.status(200).send({ success: true, msg: '', data: result.contact })

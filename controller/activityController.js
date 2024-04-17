@@ -1,7 +1,6 @@
 const activityModel = require('../models/activityModel');
 const accountModel = require('../models/accountModel')
 exports.activityController = async (req, res) => {
-    console.log(req.body)
     try {
         const data = new activityModel(req.body)
         const result = await data.save()
@@ -15,36 +14,36 @@ exports.activityController = async (req, res) => {
 }
 
 exports.getActivityController = async (req, res) => {
-        console.log("called")
+    console.log("called")
     try {
 
         const { searchKey, id, page, limit, startDate, endDate, activityType } = req.query
         const skip = (page - 1) * limit;
 
-        let filter = {userId: id} 
+        let filter = { userId: id }
 
-        if(startDate && endDate){
+        if (startDate && endDate) {
             filter.activityDate = {
                 $gte: new Date(startDate),
                 $lte: new Date(endDate)
             };
         }
 
-        if(activityType){
-          filter.activityType = activityType
+        if (activityType) {
+            filter.activityType = activityType
         }
 
-       
-         
+
+
         const totalPages = await activityModel.find(filter)
 
         if (searchKey && searchKey.length > 0) {
             const skip = (page - 1) * limit;
 
             const accountIds = await accountModel.find({ accountName: { $regex: searchKey, $options: 'i' }, }, '_id');
-            const totalPagesCount = await activityModel.find({ userId: id, account: { $in: accountIds },...filter })
+            const totalPagesCount = await activityModel.find({ userId: id, account: { $in: accountIds }, ...filter })
             const result = await activityModel
-                .find({ userId: id, account: { $in: accountIds },...filter })
+                .find({ userId: id, account: { $in: accountIds }, ...filter })
                 .populate('account')
                 .skip(skip)
                 .limit(limit);
@@ -142,5 +141,22 @@ exports.checkInCheckOut = async (req, res) => {
     }
     catch (err) {
         res.status(500).send({ success: false, msg: err.message, data: [] })
+    }
+}
+
+exports.getActivityById = async (req, res) => {
+    const { id } = req.query
+        
+    try {
+        const result = await activityModel.findOne({ _id: id }).populate({ path: 'account', populate: { path: 'contact' } }).exec()
+        if (result) {
+            res.status(200).send({ success: true, msg: '', data: result})
+        }
+        else {
+            res.status(500).send({ success: false, msg: 'internal server error', data: [] })
+        }
+    }
+    catch (err) {
+        res.status(500).send({ success: false, msg: 'internal server error', data: [] })
     }
 }
