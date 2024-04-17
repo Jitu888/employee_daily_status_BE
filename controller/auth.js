@@ -5,24 +5,32 @@ const { generateOTP } = require('../utility/randomOtpGenerator')
 const { sendMailTo } = require('../utility/nodeMailer')
 const moment = require('moment')
 
+function toLowerCaseString(inputString) {
+    return inputString.toLowerCase();
+  }
+
 exports.login = async (req, res) => {
     try {
 
 
         const { email, password } = req.body
-        const emailExist = await userModel.findOne({ email: email })
+        const lower_Email = toLowerCaseString(email)
+        const emailExist = await userModel.findOne({ email: lower_Email })
         if (!emailExist) {
-            res.status(401).send({ success: false, msg: "invalid credentials", data: "" })
+            return res.status(401).send({ success: false, msg: "invalid credentials", data: {} })
         }
         else {
             if (emailExist.password === password) {
                 const token = jwt.sign({ email: emailExist.email }, JWT_SECERET_KEY)
-                res.status(200).send({ success: true, msg: "login successfull", token: token, data: emailExist })
+                return res.status(200).send({ success: true, msg: "login successfull", token: token, data: emailExist })
+            }
+            else{
+                return res.status(200).send({ success: false, msg: "Invalid credentials", token: "", data: {} })
             }
         }
 
     } catch (err) {
-        res.status(500).send({ success: false, msg: "something went wrong", data: "" })
+        res.status(500).send({ success: false, msg: err.message, data: {} })
     }
 }
 
@@ -30,10 +38,11 @@ exports.login = async (req, res) => {
 exports.register = async (req, res) => {
     try {
         const { email, password, mobile } = req.body
-
-        const isEmailAlreadyExist = await userModel.find({ email: email });
+        const lower_Email = toLowerCaseString(email)
+        req.body.email = lower_Email
+        const isEmailAlreadyExist = await userModel.find({ email: lower_Email });
         if (isEmailAlreadyExist.length > 0) {
-            res.status(401).send({ success: false, msg: "email already exist", data: "" })
+            res.status(401).send({ success: false, msg: "email Id already exist", data: "" })
         }
         else {
 
@@ -95,7 +104,7 @@ exports.verifyAccountController = async (req, res, next) => {
         if (result && result.otp === otp && isExpired) {
             const updateAccount = await userModel.findByIdAndUpdate(
                 { _id: result._id },
-                { is_Verified: true }, {
+                { is_Verified: true },{
                 new: true
             }
             );

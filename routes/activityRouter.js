@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {activityController,getActicityBySearch,getActivityController,getAllActivityController,checkInCheckOut} = require('../controller/activityController');
+const {activityController,getActicityBySearch,getActivityController,getAllActivityController,checkInCheckOut,getActivityById} = require('../controller/activityController');
 
 
 router.get('/get_activity_by_userID',getActivityController)
@@ -11,6 +11,8 @@ router.post('/add_activity',activityController)
 router.get('/get_activity_by_search',getActicityBySearch)
 
 router.patch('/checkin_CheckOut',checkInCheckOut)
+
+router.get('/get_activity_by_ID',getActivityById)
 
 
 
