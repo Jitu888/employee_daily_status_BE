@@ -7,7 +7,7 @@ const moment = require('moment')
 
 function toLowerCaseString(inputString) {
     return inputString.toLowerCase();
-  }
+}
 
 exports.login = async (req, res) => {
     try {
@@ -24,7 +24,7 @@ exports.login = async (req, res) => {
                 const token = jwt.sign({ email: emailExist.email }, JWT_SECERET_KEY)
                 return res.status(200).send({ success: true, msg: "login successfull", token: token, data: emailExist })
             }
-            else{
+            else {
                 return res.status(200).send({ success: false, msg: "Invalid credentials", token: "", data: {} })
             }
         }
@@ -80,13 +80,11 @@ exports.register = async (req, res) => {
 }
 
 function isTimeNotGreaterThan10Minutes(databaseTime) {
-
-    const databaseDateTime = moment(databaseTime).toDate();
-    console.log(databaseDateTime)
-    const currentTime = Date.now();
-    console.log(currentTime)
-    const timeDifferenceMs = currentTime - databaseDateTime;
-    console.log(timeDifferenceMs)
+    const expirydateObject = new Date(databaseTime);
+    const expiryTimeInMilliseconds = expirydateObject.getTime()
+    const currentDateObject = new Date();
+    const currentTimeInMilliseconds = currentDateObject.getTime()
+    const timeDifferenceMs = currentTimeInMilliseconds - expiryTimeInMilliseconds;
     return timeDifferenceMs <= 600000;
 }
 
@@ -95,16 +93,16 @@ function isTimeNotGreaterThan10Minutes(databaseTime) {
 exports.verifyAccountController = async (req, res, next) => {
 
     const { otp, email } = req.body;
-    
+
     try {
 
         const result = await userModel.findOne({ email: email })
         const isExpired = isTimeNotGreaterThan10Minutes(result.otpExpiryTime)
-        console.log("ffff",isExpired,result && result.otp === otp && isExpired,result && result.otp,otp)
+        console.log("ffff", isExpired, result && result.otp === otp && isExpired, result && result.otp, otp)
         if (result && result.otp === otp && isExpired) {
             const updateAccount = await userModel.findByIdAndUpdate(
                 { _id: result._id },
-                { is_Verified: true },{
+                { is_Verified: true }, {
                 new: true
             }
             );
@@ -114,13 +112,13 @@ exports.verifyAccountController = async (req, res, next) => {
         }
     } catch (err) {
         res.send({ msg: err.message });
-         
+
     }
 }
 
-exports.getNewOtp = async(req,res)=>{
-    try{
-        const {email} = req.body
+exports.getNewOtp = async (req, res) => {
+    try {
+        const { email } = req.body
         const otp = generateOTP();
         const emailStatus = await sendMailTo(
             [email],
@@ -128,25 +126,25 @@ exports.getNewOtp = async(req,res)=>{
         );
         const currentDate = Date.now()
         const result = await userModel.findOne({ email: email })
-        if(result){
+        if (result) {
             const updateAccount = await userModel.findByIdAndUpdate(
                 { _id: result._id },
-                { otp: otp,otpExpiryTime:currentDate }, {
+                { otp: otp, otpExpiryTime: currentDate }, {
                 new: true
             }
             );
             res.send({ status: "otp sent successfully", updateAccount });
         }
-        else{
+        else {
             res.send({ status: "somthing went wrong try again" });
-            
+
         }
     }
-    catch(err){
-        res.send({success:false,msg:err.message,data:[]})
+    catch (err) {
+        res.send({ success: false, msg: err.message, data: [] })
     }
 
- 
+
 
 }
 
