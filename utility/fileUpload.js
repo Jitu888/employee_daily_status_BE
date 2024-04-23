@@ -33,10 +33,13 @@ const uploadFile = async (fileObj) => {
             role:'reader',
             type:'anyone'
         },
-        fields: 'webViewLink'
+        fields: 'id'
     })
 
-   return data
+    const fileId = data.id;
+    const fileUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
+   return fileUrl
 }
 
 uploadRouter.post('/upload', upload.single('file'), async (req, res) => {
@@ -48,6 +51,7 @@ uploadRouter.post('/upload', upload.single('file'), async (req, res) => {
           const result = await uploadFile(file)
         //    fileResult.push(result)
         // }
+        console.log(result)
         res.status(200).send({success:true,msg:'uploaded successfully',data:result})
     }
     catch (err) {
