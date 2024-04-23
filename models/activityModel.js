@@ -47,7 +47,7 @@ const model = mongoose.Schema({
         index: true
     },
     files:{
-        type:Array
+        type:String
     },
     status:{
         type:String
