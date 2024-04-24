@@ -7,6 +7,8 @@ const authRoutes = require('./routes/authRoutes');
 const activityRoutes = require('./routes/activityRouter');
 const accountRoutes = require('./routes/accountRoutes');
 const uploadRouter = require('./utility/fileUpload');
+const env = require('dotenv');
+env.config();
 
 (() => {
     body_parser();

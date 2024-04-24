@@ -14,9 +14,8 @@ exports.activityController = async (req, res) => {
 }
 
 exports.getActivityController = async (req, res) => {
-    console.log("called")
     try {
-
+        console.log("called")
         const { searchKey, id, page, limit, startDate, endDate, activityType } = req.query
         const skip = (page - 1) * limit;
 
@@ -28,13 +27,9 @@ exports.getActivityController = async (req, res) => {
                 $lte: new Date(endDate)
             };
         }
-
         if (activityType) {
             filter.activityType = activityType
         }
-
-
-
         const totalPages = await activityModel.find(filter)
 
         if (searchKey && searchKey.length > 0) {
@@ -46,7 +41,7 @@ exports.getActivityController = async (req, res) => {
                 .find({ userId: id, account: { $in: accountIds }, ...filter })
                 .populate('account')
                 .skip(skip)
-                .limit(limit);
+                .limit(limit).sort({ activityDate: -1 });
             if (result) {
                 res.status(200).send({ success: true, msg: '', data: result, totalPages: totalPagesCount.length })
             }
@@ -56,8 +51,8 @@ exports.getActivityController = async (req, res) => {
         }
         else {
 
-            const result = await activityModel.find(filter).skip(skip).limit(limit).populate({ path: 'account', populate: { path: 'contact' } }).exec()
-            console.log(result)
+            const result = await activityModel.find(filter).skip(skip).limit(limit).sort({ activityDate: -1 }).populate({ path: 'account', populate: { path: 'contact' } }).exec();
+            console.log(result.length)
             if (result) {
                 res.status(200).send({ success: true, msg: '', data: result, totalPages: totalPages.length })
             }
