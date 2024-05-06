@@ -32,6 +32,9 @@ const model = mongoose.Schema({
    otpExpiryTime:{
     type:Date,
     default:Date.now()
+   },
+   profileImg:{
+    type:String
    }
 
 })

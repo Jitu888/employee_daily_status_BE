@@ -1,5 +1,6 @@
 const activityModel = require('../models/activityModel');
-const accountModel = require('../models/accountModel')
+const accountModel = require('../models/accountModel');
+const userModel = require('../models/userModel');
 exports.activityController = async (req, res) => {
     try {
         const data = new activityModel(req.body)
@@ -15,7 +16,6 @@ exports.activityController = async (req, res) => {
 
 exports.getActivityController = async (req, res) => {
     try {
-        console.log("called")
         const { searchKey, id, page, limit, startDate, endDate, activityType } = req.query
         const skip = (page - 1) * limit;
 
@@ -68,7 +68,7 @@ exports.getActivityController = async (req, res) => {
 
 exports.getAllActivityController = async (req, res) => {
     try {
-        const result = await activityModel.find().populate('account')
+        const result = await activityModel.find().populate([{path:'account',model:accountModel},{path:'userId',model:userModel}])
         if (result) {
             res.status(200).send({ success: true, msg: '', data: result })
         }
@@ -81,7 +81,6 @@ exports.getAllActivityController = async (req, res) => {
 
     }
 }
-
 
 exports.getActicityBySearch = async (req, res) => {
     try {
