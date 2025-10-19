@@ -8,6 +8,7 @@ const activityRoutes = require('./routes/activityRouter');
 const accountRoutes = require('./routes/accountRoutes');
 const uploadRouter = require('./utility/fileUpload');
 const adminRoutes = require('./routes/adminRoutes')
+const profileRoutes = require('./routes/profileRoutes');
 const env = require('dotenv');
 env.config();
 
@@ -44,6 +45,7 @@ function routes_config() {
    app.use('/',accountRoutes)
    app.use('/',uploadRouter)
    app.use('/',adminRoutes)
+   app.use('/', profileRoutes);
 }
 
 function global_Error_Handler() {

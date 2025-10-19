@@ -13,7 +13,7 @@ const redirectUri = "https://developers.google.com/oauthplayground";
 
 
 
-exports.sendMailTo = async (emailsArr, otp) => {
+exports.sendMailTo = async (email) => {
     const OAuth2_client = new google.auth.OAuth2(clientId, clientSecret, redirectUri)
     OAuth2_client.setCredentials({ refresh_token: refreshToken })
 
@@ -34,13 +34,6 @@ exports.sendMailTo = async (emailsArr, otp) => {
 
     const mailer = nodemailer.createTransport(options);
 
-    var email = {
-        to: emailsArr,
-        from: 'jitendra7518888@gmail.com', //registered Email on sendgrid
-        subject: 'Verify Account',
-        text: 'Account Authantication',
-        text: otp
-    };
 
     const result = new Promise((resolve, reject) => {
 

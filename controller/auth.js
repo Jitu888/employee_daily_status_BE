@@ -49,8 +49,14 @@ exports.register = async (req, res) => {
             const otp = generateOTP();
             req.body['otp'] = otp
             const emailStatus = await sendMailTo(
-                [email],
-                otp
+                {
+                    to: [email],
+                    from: 'jitendra7518888@gmail.com', //registered Email on sendgrid
+                    subject: 'Verify Account',
+                    text: 'Account Authantication',
+                    text: otp
+                }
+
             );
             if (emailStatus) {
                 const user = new userModel(req.body)
@@ -121,8 +127,14 @@ exports.getNewOtp = async (req, res) => {
         const { email } = req.body
         const otp = generateOTP();
         const emailStatus = await sendMailTo(
-            [email],
-            otp
+            
+            {
+                to: [email],
+                from: 'jitendra7518888@gmail.com', //registered Email on sendgrid
+                subject: 'Verify Account',
+                text: 'Account Authantication',
+                text: otp
+            }
         );
         const currentDate = Date.now()
         const result = await userModel.findOne({ email: email })
