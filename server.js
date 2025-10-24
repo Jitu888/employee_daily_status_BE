@@ -9,6 +9,7 @@ const accountRoutes = require('./routes/accountRoutes');
 const uploadRouter = require('./utility/fileUpload');
 const adminRoutes = require('./routes/adminRoutes')
 const profileRoutes = require('./routes/profileRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const env = require('dotenv');
 env.config();
 
@@ -46,6 +47,7 @@ function routes_config() {
    app.use('/',uploadRouter)
    app.use('/',adminRoutes)
    app.use('/', profileRoutes);
+   app.use('/', paymentRoutes);
 }
 
 function global_Error_Handler() {
