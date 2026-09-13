@@ -53,7 +53,7 @@ function routes_config() {
 function global_Error_Handler() {
     app.use((err, req, res, next) => {
         const errorStatus = req.status || 500;
-        const error = err.message && [err.message] || err || "Internal Server Error";
+        const error = err.message && [err.message] || err || "Something went wrong";
         res.status(errorStatus).send({ error })
     })
 }
