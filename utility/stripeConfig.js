@@ -1,4 +1,4 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || 'sk_test_51SLeIzDcUcyulkxwSUT8epqtVm1cjpPoUPyeMz9eRkhwxsSINoSy8LBfng0Xqf2NyO25ZpbeuZhq3PfroZSL1qIY00JeokKJYa');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY );
 
 const stripeSession = async ({ payment_method_types = ['card'], product_data, unit_amount, currency = 'INR' }) => {
     if (unit_amount === undefined || unit_amount === null) {
